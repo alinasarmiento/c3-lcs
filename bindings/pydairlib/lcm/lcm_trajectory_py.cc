@@ -3,7 +3,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include "lcm/dircon_saved_trajectory.h"
 #include "lcm/lcm_trajectory.h"
 
 namespace py = pybind11;
@@ -44,49 +43,9 @@ PYBIND11_MODULE(lcm_trajectory, m) {
            py::arg("trajectory_name"))
       .def("GetTrajectoryNames", &LcmTrajectory::GetTrajectoryNames)
       .def("GetMetadata", &LcmTrajectory::GetMetadata)
-      .def("AddTrajectory", &DirconTrajectory::AddTrajectory)
       .def("GenerateLcmObject", &LcmTrajectory::GenerateLcmObject)
       .def("GetTrajectory", &LcmTrajectory::GetTrajectory,
            py::arg("trajectory_name"));
-  py::class_<DirconTrajectory>(m, "DirconTrajectory")
-      .def(py::init<const drake::multibody::MultibodyPlant<double>&,
-                    const std::string&>())
-      .def("WriteToFile", &LcmTrajectory::WriteToFile,
-           py::arg("trajectory_name"))
-      .def("GetMetadata", &LcmTrajectory::GetMetadata)
-      .def("GetTrajectoryNames", &LcmTrajectory::GetTrajectoryNames)
-      .def("AddTrajectory", &DirconTrajectory::AddTrajectory)
-      .def("GetTrajectory", &LcmTrajectory::GetTrajectory,
-           py::arg("trajectory_name"))
-      .def("GetStateSamples", &DirconTrajectory::GetStateSamples)
-      .def("GetStateDerivativeSamples",
-           &DirconTrajectory::GetStateDerivativeSamples)
-      .def("GetStateBreaks", &DirconTrajectory::GetStateBreaks)
-      .def("GetInputSamples", &DirconTrajectory::GetInputSamples)
-      .def("GetBreaks", &DirconTrajectory::GetBreaks)
-      .def("GetForceSamples", &DirconTrajectory::GetForceSamples)
-      .def("GetForceBreaks", &DirconTrajectory::GetForceBreaks)
-      .def("GetImpulseSamples", &DirconTrajectory::GetImpulseSamples)
-      .def("GetCollocationForceSamples",
-           &DirconTrajectory::GetCollocationForceSamples)
-      .def("GetCollocationForceBreaks",
-           &DirconTrajectory::GetCollocationForceBreaks)
-      .def("GetDecisionVariables", &DirconTrajectory::GetDecisionVariables)
-      .def("GetNumModes", &DirconTrajectory::GetNumModes)
-      .def("ReconstructStateTrajectory",
-           &DirconTrajectory::ReconstructStateTrajectory)
-      .def("ReconstructInputTrajectory",
-           &DirconTrajectory::ReconstructInputTrajectory)
-      .def("ReconstructLambdaTrajectory",
-           &DirconTrajectory::ReconstructLambdaTrajectory)
-      .def("ReconstructLambdaCTrajectory",
-           &DirconTrajectory::ReconstructLambdaCTrajectory)
-      .def("ReconstructGammaCTrajectory",
-           &DirconTrajectory::ReconstructGammaCTrajectory)
-      .def("ReconstructStateTrajectoryWithSprings",
-           &DirconTrajectory::ReconstructStateTrajectoryWithSprings,
-           py::arg("wo_spr_to_spr_map"));
-}
 
 }  // namespace pydairlib
 }  // namespace dairlib

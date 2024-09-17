@@ -182,8 +182,6 @@ cc_library(
     ],
     deps = [
         "nonlinear_cost",
-        "//systems/trajectory_optimization:dircon",
-        "//systems/trajectory_optimization/dircon",
         "@drake//:drake_shared_library",
     ],
 )

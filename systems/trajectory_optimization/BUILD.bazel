@@ -1,0 +1,36 @@
+# -*- mode: python -*-
+# vi: set ft=python :
+
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "lcm_trajectory_systems",
+    srcs = [
+        "lcm_trajectory_systems.cc",
+    ],
+    hdrs = [
+        "lcm_trajectory_systems.h",
+    ],
+    deps = [
+        "//common:eigen_utils",
+        "//common:find_resource",
+        "//lcm:lcm_trajectory_saver",
+        "@drake//:drake_shared_library",
+    ],
+)
+
+cc_library(
+    name = "c3_output_systems",
+    srcs = [
+        "c3_output_systems.cc",
+    ],
+    hdrs = [
+        "c3_output_systems.h",
+    ],
+    deps = [
+        "//common:eigen_utils",
+        "//lcmtypes:lcmt_robot",
+        "//solvers:c3_output",
+        "@drake//:drake_shared_library",
+    ],
+)

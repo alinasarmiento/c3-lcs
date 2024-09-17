@@ -41,7 +41,6 @@ py_library(
 pybind_py_library(
     name = "lcm_trajectory_py",
     cc_deps = [
-        "//lcm:dircon_trajectory_saver",
         "//lcm:lcm_trajectory_saver",
         "@drake//:drake_shared_library",
     ],

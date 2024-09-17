@@ -51,8 +51,6 @@ cc_binary(
     deps = [
         ":kinematic",
         "//common",
-        "//examples/Cassie:cassie_urdf",
-        "//examples/Cassie:cassie_utils",
     ],
 )
 
@@ -65,7 +63,6 @@ cc_test(
     deps = [
         ":kinematic",
         "//common",
-        "//examples/PlanarWalker:urdf",
         "@drake//common/test_utilities",
         "@gtest//:main",
     ],

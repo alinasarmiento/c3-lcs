@@ -97,8 +97,6 @@ LcmPoseDrawer::LcmPoseDrawer(
   }
   alpha_scale.reverseInPlace();
 
-  multipose_visualizer_ = std::make_unique<multibody::MultiposeVisualizer>(
-      model_file, N_ - 1, alpha_scale, "", meshcat);
   trajectory_input_port_ =
       this->DeclareAbstractInputPort(
               "lcmt_timestamped_saved_traj",
@@ -160,7 +158,6 @@ drake::systems::EventStatus LcmPoseDrawer::DrawTrajectory(
         translation_trajectory.value(translation_breaks(i + 1));
   }
 
-  multipose_visualizer_->DrawPoses(object_poses);
 
   return drake::systems::EventStatus::Succeeded();
 }

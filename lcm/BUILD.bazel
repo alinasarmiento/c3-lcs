@@ -15,7 +15,6 @@ cc_binary(
 cc_library(
     name = "trajectory_saver",
     deps = [
-        "//lcm:dircon_trajectory_saver",
         "//lcm:lcm_trajectory_saver",
     ],
 )
