@@ -47,5 +47,6 @@ PYBIND11_MODULE(lcm_trajectory, m) {
       .def("GetTrajectory", &LcmTrajectory::GetTrajectory,
            py::arg("trajectory_name"));
 
+}
 }  // namespace pydairlib
 }  // namespace dairlib

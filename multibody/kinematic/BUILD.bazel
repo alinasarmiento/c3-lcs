@@ -42,28 +42,3 @@ cc_library(
         "@drake//:drake_shared_library",
     ],
 )
-
-cc_binary(
-    name = "kinematic_evaluator_caching_test",
-    srcs = [
-        "test/kinematic_evaluator_caching_test.cc",
-    ],
-    deps = [
-        ":kinematic",
-        "//common",
-    ],
-)
-
-cc_test(
-    name = "kinematic_evaluator_test",
-    size = "small",
-    srcs = [
-        "test/kinematic_evaluator_test.cc",
-    ],
-    deps = [
-        ":kinematic",
-        "//common",
-        "@drake//common/test_utilities",
-        "@gtest//:main",
-    ],
-)

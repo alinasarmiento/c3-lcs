@@ -52,7 +52,7 @@ cc_library(
                 ":c3_miqp.cc",
             ],
             "//conditions:default": [
-                ":c3_miqp_no_gurobi.cc",
+                ":c3_miqp.cc",
             ],
         }),
     hdrs = [
@@ -168,20 +168,6 @@ cc_library(
         "optimization_utils.h",
     ],
     deps = [
-        "@drake//:drake_shared_library",
-    ],
-)
-
-cc_library(
-    name = "cost_function_utils",
-    srcs = [
-        "cost_function_utils.cc",
-    ],
-    hdrs = [
-        "cost_function_utils.h",
-    ],
-    deps = [
-        "nonlinear_cost",
         "@drake//:drake_shared_library",
     ],
 )

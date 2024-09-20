@@ -14,6 +14,7 @@ load(
 pybind_py_library(
     name = "multibody_py",
     cc_deps = [
+        "//multibody:multipose_visualizer",
         "//multibody:utils",
         "//multibody:visualization_utils",
         "@drake//:drake_shared_library",

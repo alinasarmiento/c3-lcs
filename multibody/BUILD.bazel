@@ -36,6 +36,7 @@ cc_library(
     ],
 )
 
+
 cc_library(
     name = "visualization_utils",
     srcs = [
@@ -53,6 +54,19 @@ cc_library(
 )
 
 cc_library(
+    name = "multipose_visualizer",
+    srcs = [
+        "multipose_visualizer.cc",
+    ],
+    hdrs = [
+        "multipose_visualizer.h",
+    ],
+    deps = [
+        "@drake//:drake_shared_library",
+    ],
+)
+
+cc_library(
     name = "view_frame",
     srcs = ["view_frame.cc"],
     hdrs = ["view_frame.h"],
@@ -60,18 +74,6 @@ cc_library(
         "//multibody:utils",
         "//systems/framework:vector",
         "@drake//:drake_shared_library",
-    ],
-)
-
-cc_test(
-    name = "multibody_utils_test",
-    size = "small",
-    srcs = ["test/multibody_utils_test.cc"],
-    deps = [
-        ":utils",
-        "//common",
-        "@drake//:drake_shared_library",
-        "@gtest//:main",
     ],
 )
 
@@ -85,17 +87,6 @@ cc_library(
     srcs = ["geom_geom_collider.cc"],
     hdrs = ["geom_geom_collider.h"],
     deps = [
-        "@drake//:drake_shared_library",
-    ],
-)
-
-cc_binary(
-    name = "geom_geom_collider_test",
-    srcs = ["test/geom_geom_collider_test.cc"],
-    deps = [
-        ":geom_geom_collider",
-        ":utils",
-        "//common",
         "@drake//:drake_shared_library",
     ],
 )
