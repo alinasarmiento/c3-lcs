@@ -1,0 +1,26 @@
+# -*- mode: python -*-
+# vi: set ft=python :
+
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "urdfs",
+    data = glob([
+        "urdf/**",
+    ]),
+)
+
+cc_binary(
+    name = "pushbot_visualizer",
+    srcs = ["pushbot_visualizer.cc"],
+    data = [
+        ":urdfs",
+    ],
+    deps = [
+        "//common",
+        "//multibody:utils",
+        "//multibody:visualization_utils",
+        "//systems/visualization:lcm_visualization_systems",
+        "@drake//:drake_shared_library",
+    ],
+)

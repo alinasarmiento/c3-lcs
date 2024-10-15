@@ -1,0 +1,10 @@
+group "operator" {
+    cmd "visualizer" {
+      	  exec = "bazel-bin/examples/pushbot/pushbot_visualizer";
+	  host = "localhost";
+    }
+}
+
+script "start_operator_commands" {
+    start cmd "visualizer";
+}
