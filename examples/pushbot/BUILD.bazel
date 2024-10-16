@@ -10,6 +10,7 @@ cc_library(
     ]),
 )
 
+
 cc_binary(
     name = "pushbot_visualizer",
     srcs = ["pushbot_visualizer.cc"],
@@ -17,10 +18,28 @@ cc_binary(
         ":urdfs",
     ],
     deps = [
+        ":parameters",
         "//common",
         "//multibody:utils",
         "//multibody:visualization_utils",
+        "//systems:robot_lcm_systems",
+        "//systems:system_utils",
+        "//systems/trajectory_optimization:lcm_trajectory_systems",
         "//systems/visualization:lcm_visualization_systems",
+        "@drake//:drake_shared_library",
+        "@gflags",
+    ],
+)
+
+cc_library(
+    name = "parameters",
+    hdrs = [
+        "pushbot_lcm_channels.h",
+    ],
+    data = glob([
+        "*yaml",
+    ]),
+    deps = [
         "@drake//:drake_shared_library",
     ],
 )
