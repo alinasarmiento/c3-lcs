@@ -5,7 +5,8 @@
 #include "common/eigen_utils.h"
 #include "common/find_resource.h"
 #include "common/find_resource.h"
-#include "examples/pushbot/pushbot_lcm_channels.h"
+#include "examples/pushbot/parameters/pushbot_lcm_channels.h"
+#include "examples/pushbot/parameters/pushbot_sim_scene_params.h"
 #include "multibody/visualization_utils.h"
 #include "systems/primitives/subvector_pass_through.h"
 #include "systems/robot_lcm_systems.h"
@@ -45,7 +46,8 @@ namespace dairlib {
   using drake::systems::DiagramBuilder;
   
   int do_main() {
-    PushbotLcmChannels lcm_channel_params = drake::yaml::LoadYamlFile<PushbotLcmChannels>("examples/pushbot/lcm_channels_simulation.yaml");
+    PushbotLcmChannels lcm_channel_params = drake::yaml::LoadYamlFile<PushbotLcmChannels>("examples/pushbot/parameters/lcm_channels_simulation.yaml");
+    PushbotSimSceneParams scene_params = drake::yaml::LoadYamlFile<PushbotSimSceneParams>("examples/pushbot/parameters/scene.yaml");
     drake::systems::DiagramBuilder<double> builder;
 
     SceneGraph<double>& scene_graph = *builder.AddSystem<SceneGraph>();
@@ -56,11 +58,20 @@ namespace dairlib {
     Parser parser(&plant, &scene_graph);
     parser.SetAutoRenaming(true);
     drake::multibody::ModelInstanceIndex pushbot_index = parser.AddModels(FindResourceOrThrow("examples/pushbot/urdf/pushbot.urdf"))[0];
+    drake::multibody::ModelInstanceIndex wall1_index = parser.AddModels(FindResourceOrThrow("examples/pushbot/urdf/wall.urdf"))[0];
+    drake::multibody::ModelInstanceIndex wall2_index = parser.AddModels(FindResourceOrThrow("examples/pushbot/urdf/wall.urdf"))[0];
 
     Vector3d pushbot_origin = Eigen::VectorXd::Zero(3);
     RigidTransform<double> R_X_W = RigidTransform<double>(drake::math::RotationMatrix<double>(), pushbot_origin);
+
+    Vector3d wall1_origin = scene_params.wall1_position[0];
+    Vector3d wall2_origin = scene_params.wall2_position[0];
+    RigidTransform<double> T_E1_W = RigidTransform<double>(drake::math::RotationMatrix<double>(), wall1_origin);
+    RigidTransform<double> T_E2_W = RigidTransform<double>(drake::math::RotationMatrix<double>(), wall2_origin);
     
-    plant.WeldFrames(plant.world_frame(), plant.GetFrameByName("base"), R_X_W);
+    plant.WeldFrames(plant.world_frame(), plant.GetFrameByName("base", pushbot_index), R_X_W);
+    plant.WeldFrames(plant.world_frame(), plant.GetFrameByName("base", wall1_index), T_E1_W);
+    plant.WeldFrames(plant.world_frame(), plant.GetFrameByName("base", wall2_index), T_E2_W);
 
     plant.Finalize();
 
@@ -82,6 +93,9 @@ namespace dairlib {
     params.publish_period = 1.0 / 32;
     auto meshcat = std::make_shared<drake::geometry::Meshcat>();
 
+    // meshcat::AddButton("disturbance_force");
+    // builder.Connect();
+    
     builder.Connect(pushbot_passthrough->get_output_port(),
 		    mux->get_input_port(0));
     builder.Connect(*mux, *to_pose);

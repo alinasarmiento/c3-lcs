@@ -59,7 +59,7 @@ class FrankaKinematicsVector : public TimestampedVector<T> {
     DRAKE_DEMAND(positions.size() == num_end_effector_positions_);
     this->get_mutable_data().segment(end_effector_positions_start_,
                                      num_end_effector_positions_) = positions;
-  }
+   }
 
   void SetObjectPositions(drake::VectorX<T> positions) {
     DRAKE_DEMAND(positions.size() == num_object_positions_);

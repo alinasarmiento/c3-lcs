@@ -1,10 +1,34 @@
+group "simulations" {
+    cmd "pushbot_sim" {
+        exec = "bazel-bin/examples/pushbot/pushbot_sim";
+	host = "localhost";
+    }
+}
+
 group "operator" {
     cmd "visualizer" {
-      	  exec = "bazel-bin/examples/pushbot/pushbot_visualizer";
-	  host = "localhost";
+	exec = "bazel-bin/examples/pushbot/pushbot_visualizer";
+	host = "localhost";
+    }
+}
+
+group "controllers" {
+    cmd "pushbot_c3" {
+	exec = "bazel-bin/examples/pushbot/pushbot_c3_controller";
+	host = "localhost";
     }
 }
 
 script "start_operator_commands" {
     start cmd "visualizer";
+}
+
+script "c3_mpc" {
+    start cmd "pushbot_sim";
+    start cmd "pushbot_c3";
+}
+
+script "stop_controllers_and_simulators" {
+    stop group "simulations";
+    stop group "controllers";
 }

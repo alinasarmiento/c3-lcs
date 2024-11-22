@@ -1,0 +1,14 @@
+scene_index: 1
+c3_options_file: [examples/pushbot/parameters/c3_options.yaml]
+c3_scene_file: [examples/pushbot/parameters/c3_scene.yaml]
+osqp_settings_file: examples/pushbot/parameters/pushbot_c3_qp_settings.yaml
+
+# Note: C3 is set to update much faster than this number. This is just to reduce preempting of the current plan
+target_frequency: 0 #unused
+
+near_target_threshold: 0.05
+first_target: [[0.0, 0.0]]
+
+x_scale: 0.1
+y_scale: 0.1
+z_scale: 0.1
