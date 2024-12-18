@@ -7,6 +7,7 @@ cc_library(
     srcs = [],
     deps = [
         ":affine_controller",
+	":simple_controller",
         ":controller_failure_aggregator",
         ":fsm_event_time",
     ],
@@ -113,6 +114,21 @@ cc_library(
     ],
     deps = [
         "//systems/framework:vector",
+        "@drake//:drake_shared_library",
+    ],
+)
+
+cc_library(
+    name = "simple_controller",
+    srcs = [
+        "simple_controller.cc",
+    ],
+    hdrs = [
+        "simple_controller.h",
+    ],
+    deps = [
+        "//systems/framework:vector",
+	"//multibody:utils",
         "@drake//:drake_shared_library",
     ],
 )

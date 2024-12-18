@@ -10,6 +10,22 @@ cc_library(
     ]),
 )
 
+cc_binary(
+    name = "c3_unit_test",
+    srcs = ["c3_unit_test.cc"],
+    data = [
+        ":urdfs",
+    ],
+    deps = [
+        ":parameters",
+        "//common",
+        "//systems/controllers",
+        "//systems/controllers:c3_controller",
+        "@drake//:drake_shared_library",
+        "@gtest//:main"
+    ],
+    testonly = True,
+)
 
 cc_binary(
     name = "pushbot_visualizer",
@@ -32,29 +48,6 @@ cc_binary(
 )
 
 cc_binary(
-    name = "pushbot_osc_controller",
-    srcs = ["pushbot_osc_controller.cc"],
-    data = [
-        ":urdfs",
-    ],
-    deps = [
-        ":parameters",
-        "//common",
-        "//examples/pushbot/systems:pushbot_systems",
-        "//lcm:lcm_trajectory_saver",
-        "//systems:robot_lcm_systems",
-        "//systems:system_utils",
-        "//systems/controllers",
-        "//systems/controllers/osc:operational_space_control",
-        "//systems/framework:lcm_driven_loop",
-        "//systems/primitives:radio_parser",
-        "//systems/trajectory_optimization:lcm_trajectory_systems",
-        "@drake//:drake_shared_library",
-        "@gflags",
-    ],
-)
-
-cc_binary(
     name = "pushbot_c3_controller",
     srcs = ["pushbot_c3_controller.cc"],
     data = [
@@ -69,7 +62,6 @@ cc_binary(
         "//systems/controllers",
         "//systems/controllers:c3_controller",
         "//systems/controllers:lcs_factory_system",
-        "//systems/controllers/osc:operational_space_control",
         "//systems/framework:lcm_driven_loop",
         "//systems/primitives:radio_parser",
         "//systems/trajectory_optimization:c3_output_systems",
@@ -79,6 +71,29 @@ cc_binary(
         "@gflags",
     ],
 )
+
+# cc_binary(
+#     name = "pushbot_llc_controller",
+#     srcs = ["pushbot_llc_controller.cc"],
+#     data = [
+#         ":urdfs",
+#     ],
+#     deps = [
+#         ":parameters",
+#         "//common",
+#         "//examples/pushbot/systems:pushbot_systems",
+#         "//lcm:lcm_trajectory_saver",
+#         "//systems:robot_lcm_systems",
+#         "//systems/controllers",
+#         "//systems/controllers:simple_controller",
+#         "//systems/framework:lcm_driven_loop",
+#         "//systems/primitives:radio_parser",
+#         "//systems:system_utils",
+#         "//systems/trajectory_optimization:lcm_trajectory_systems",
+#         "@drake//:drake_shared_library",
+#         "@gflags",
+#     ],
+# )
 
 cc_binary(
     name = "pushbot_sim",
@@ -106,7 +121,6 @@ cc_library(
         "parameters/pushbot_lcm_channels.h",
         "parameters/pushbot_sim_scene_params.h",
         "parameters/pushbot_sim_params.h",
-        "parameters/pushbot_osc_controller_params.h",
         "parameters/pushbot_c3_controller_params.h"
     ],
     data = glob([

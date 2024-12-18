@@ -89,7 +89,7 @@ int DoMain(int argc, char* argv[]) {
     PushbotLcmChannels lcm_channel_params =
 	drake::yaml::LoadYamlFile<PushbotLcmChannels>(FLAGS_lcm_channels);
     PushbotSimSceneParams scene_params =
-        drake::yaml::LoadYamlFile<PushbotSimSceneParams>("examples/pushbot/parameters/pushbot_scene_params.yaml");
+        drake::yaml::LoadYamlFile<PushbotSimSceneParams>("examples/pushbot/parameters/scene.yaml");
     C3Options c3_options = drake::yaml::LoadYamlFile<C3Options>(
 	controller_params.c3_options_file[controller_params.scene_index]);
     drake::solvers::SolverOptions solver_options =
@@ -160,7 +160,8 @@ int DoMain(int argc, char* argv[]) {
     contact_pairs.emplace_back(contact_geoms["EE"][0], contact_geoms["WALL1"][0]);
     contact_pairs.emplace_back(contact_geoms["EE"][0], contact_geoms["WALL2"][0]);
     
-    // create state handler
+    // ############### wiring #############
+    
     DiagramBuilder<double> builder;
     auto pushbot_state_receiver =
 	builder.AddSystem<systems::RobotOutputReceiver>(plant_pushbot);
@@ -204,6 +205,13 @@ int DoMain(int argc, char* argv[]) {
     auto c3_output_sender = builder.AddSystem<systems::C3OutputSender>();
     controller->SetOsqpSolverOptions(solver_options);
     auto kinematics_model = builder.AddSystem<systems::PushbotKinematics>(plant_pushbot, pushbot_context.get());
+
+    auto pushbot_command_pub =
+      builder.AddSystem(LcmPublisherSystem::Make<dairlib::lcmt_robot_input>(
+          lcm_channel_params.pushbot_input_channel, &lcm,
+          TriggerTypeSet({TriggerType::kForced})));
+    auto pushbot_command_sender =
+      builder.AddSystem<systems::RobotCommandSender>(plant_pushbot);
     
     builder.Connect(*radio_sub, *radio_to_vector);
     
@@ -221,8 +229,8 @@ int DoMain(int argc, char* argv[]) {
     builder.Connect(kinematics_model->get_output_port_lcs_input(),
 		    lcs_factory->get_input_port_lcs_input());
 
-    builder.Connect(controller->get_output_port_c3_solution(),
-		    c3_trajectory_generator->get_input_port_c3_solution());
+    // builder.Connect(controller->get_output_port_c3_solution(),
+    // 		    c3_trajectory_generator->get_input_port_c3_solution());
     builder.Connect(lcs_factory->get_output_port_lcs_contact_jacobian(),
 		    c3_output_sender->get_input_port_lcs_contact_info());
     builder.Connect(pushbot_state_receiver->get_output_port(),
@@ -242,7 +250,12 @@ int DoMain(int argc, char* argv[]) {
     builder.Connect(c3_output_sender->get_output_port_c3_force(),
 		    c3_forces_publisher->get_input_port());
 
+    builder.Connect(pushbot_command_sender->get_output_port(),
+		    pushbot_command_pub->get_input_port());
+    builder.Connect(controller->get_output_port_c3_solution(),
+		    pushbot_command_sender->get_input_port(0));
 
+    
     auto owned_diagram = builder.Build();
     owned_diagram->set_name(("pushbot_c3_controller"));
     plant_diagram->set_name(("pushbot_c3_plant"));

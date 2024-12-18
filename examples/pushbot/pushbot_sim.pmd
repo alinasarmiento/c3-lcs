@@ -24,8 +24,8 @@ script "start_operator_commands" {
 }
 
 script "c3_mpc" {
-    start cmd "pushbot_sim";
-    start cmd "pushbot_c3";
+    start group "simulations";
+    start group "controllers";
 }
 
 script "stop_controllers_and_simulators" {
