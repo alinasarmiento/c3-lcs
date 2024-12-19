@@ -31,6 +31,7 @@ RobotOutputReceiver::RobotOutputReceiver(
   num_positions_ = plant.num_positions();
   num_velocities_ = plant.num_velocities();
   num_efforts_ = plant.num_actuators();
+
   position_index_map_ = multibody::MakeNameToPositionsMap(plant);
   velocity_index_map_ = multibody::MakeNameToVelocitiesMap(plant);
   model_instance_ = drake::multibody::ModelInstanceIndex(-1);

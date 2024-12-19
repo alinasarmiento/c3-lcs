@@ -164,6 +164,7 @@ int DoMain(int argc, char* argv[]) {
     DiagramBuilder<double> builder;
     auto pushbot_state_receiver =
 	builder.AddSystem<systems::RobotOutputReceiver>(plant_pushbot);
+    // std::cout << "plant pushbot: " << plant_pushbot.num_positions() << plant_pushbot.num_velocities() << plant_pushbot.num_actuators() << std::endl;
 
     auto c3_output_publisher =
 	builder.AddSystem(LcmPublisherSystem::Make<dairlib::lcmt_c3_output>(
@@ -196,7 +197,6 @@ int DoMain(int argc, char* argv[]) {
     // #################
 
     auto controller = builder.AddSystem<systems::C3Controller>(plant_lcs, c3_options);
-    std::cout << "check\n";            
 
     auto c3_trajectory_generator = builder.AddSystem<systems::C3TrajectoryGenerator>(plant_lcs, c3_options);
 
@@ -216,6 +216,10 @@ int DoMain(int argc, char* argv[]) {
     auto pushbot_command_sender =
       builder.AddSystem<systems::RobotCommandSender>(plant_pushbot);
 
+    // size checking
+    std::cout << "kin model: " << kinematics_model->get_output_port_lcs_state().size() << std::endl;
+    std::cout << "c3 state sender: " << c3_state_sender->get_input_port_actual_state().size() << std::endl;
+    
     builder.Connect(*radio_sub, *radio_to_vector);
     
     builder.Connect(target_source->get_output_port(),
@@ -236,9 +240,10 @@ int DoMain(int argc, char* argv[]) {
     // 		    c3_trajectory_generator->get_input_port_c3_solution());
     builder.Connect(lcs_factory->get_output_port_lcs_contact_jacobian(),
 		    c3_output_sender->get_input_port_lcs_contact_info());
-    builder.Connect(pushbot_state_receiver->get_output_port(), // other problem line
+    // builder.Connect(pushbot_state_receiver->get_output_port(), // other problem line
+    // 		    c3_state_sender->get_input_port_actual_state());
+    builder.Connect(kinematics_model->get_output_port_lcs_state(), 
 		    c3_state_sender->get_input_port_actual_state());
-    
     
     builder.Connect(c3_state_sender->get_output_port_target_c3_state(),
 		    c3_target_state_publisher->get_input_port());
@@ -255,7 +260,10 @@ int DoMain(int argc, char* argv[]) {
 
     builder.Connect(pushbot_command_sender->get_output_port(),
 		    pushbot_command_pub->get_input_port());
-    builder.Connect(controller->get_output_port_c3_solution(),
+    // type checking
+    std::cout << "c3 soln type: " << controller->get_output_port_c3_solution().get_data_type() << std::endl;
+    std::cout << "pushbot command type: " << pushbot_command_sender->get_input_port(0).get_data_type() << std::endl;
+    builder.Connect(controller->get_output_port_c3_solution(), // new problem line
 		    pushbot_command_sender->get_input_port(0));
 
     

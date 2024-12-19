@@ -87,32 +87,33 @@ C3Controller::C3Controller(
 
   // Set actor bounds,
   // TODO(yangwill): move this out of here because it is task specific
-  if (c3_options_.workspace_limits.size() > 0) {
-    Eigen::MatrixXd A =
-        MatrixXd::Zero(c3_options_.workspace_limits.size(), n_x_);
-    Eigen::VectorXd lb = VectorXd::Zero(c3_options_.workspace_limits.size());
-    Eigen::VectorXd ub = VectorXd::Zero(c3_options_.workspace_limits.size());
-    for (int i = 0; i < c3_options_.workspace_limits.size(); ++i) {
-      A.block(i, 0, 1, 3) = c3_options_.workspace_limits[i].segment(0, 3).transpose();
-      lb[i] = c3_options_.workspace_limits[i][3];
-      ub[i] = c3_options_.workspace_limits[i][4];
-    }
-    c3_->AddLinearConstraint(A, lb, ub, 1);
-  }
-  if (c3_options_.workspace_limits.size() > 0) {
-    Eigen::MatrixXd A = MatrixXd::Zero(3, n_u_);
-    Eigen::VectorXd lb = VectorXd::Zero(3);
-    Eigen::VectorXd ub = VectorXd::Zero(3);
-    for (int i = 0; i < 2; ++i) {
-      A(i, i) = 1.0;
-      lb[i] = c3_options_.u_horizontal_limits[0];
-      ub[i] = c3_options_.u_horizontal_limits[1];
-    }
-    A(2, 2) = 1.0;
-    lb[2] = c3_options_.u_vertical_limits[0];
-    ub[2] = c3_options_.u_vertical_limits[1];
-    c3_->AddLinearConstraint(A, lb, ub, 2);
-  }
+  // ### (greysar): commented out for pushbot
+  // if (c3_options_.workspace_limits.size() > 0) {
+  //   Eigen::MatrixXd A =
+  //       MatrixXd::Zero(c3_options_.workspace_limits.size(), n_x_);
+  //   Eigen::VectorXd lb = VectorXd::Zero(c3_options_.workspace_limits.size());
+  //   Eigen::VectorXd ub = VectorXd::Zero(c3_options_.workspace_limits.size());
+  //   for (int i = 0; i < c3_options_.workspace_limits.size(); ++i) {
+  //     A.block(i, 0, 1, 3) = c3_options_.workspace_limits[i].segment(0, 3).transpose();
+  //     lb[i] = c3_options_.workspace_limits[i][3];
+  //     ub[i] = c3_options_.workspace_limits[i][4];
+  //   }
+  //   c3_->AddLinearConstraint(A, lb, ub, 1);
+  // }
+  // if (c3_options_.workspace_limits.size() > 0) {
+  //   Eigen::MatrixXd A = MatrixXd::Zero(3, n_u_);
+  //   Eigen::VectorXd lb = VectorXd::Zero(3);
+  //   Eigen::VectorXd ub = VectorXd::Zero(3);
+  //   for (int i = 0; i < 2; ++i) {
+  //     A(i, i) = 1.0;
+  //     lb[i] = c3_options_.u_horizontal_limits[0];
+  //     ub[i] = c3_options_.u_horizontal_limits[1];
+  //   }
+  //   A(2, 2) = 1.0;
+  //   lb[2] = c3_options_.u_vertical_limits[0];
+  //   ub[2] = c3_options_.u_vertical_limits[1];
+  //   c3_->AddLinearConstraint(A, lb, ub, 2);
+  // }
 
   lcs_state_input_port_ =
       this->DeclareVectorInputPort("x_lcs", TimestampedVector<double>(n_x_))
