@@ -236,7 +236,7 @@ int DoMain(int argc, char* argv[]) {
     // 		    c3_trajectory_generator->get_input_port_c3_solution());
     builder.Connect(lcs_factory->get_output_port_lcs_contact_jacobian(),
 		    c3_output_sender->get_input_port_lcs_contact_info());
-    builder.Connect(pushbot_state_receiver->get_output_port(),
+    builder.Connect(pushbot_state_receiver->get_output_port(), // other problem line
 		    c3_state_sender->get_input_port_actual_state());
     
     

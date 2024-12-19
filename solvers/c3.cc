@@ -316,7 +316,7 @@ vector<VectorXd> C3::SolveQP(const VectorXd& x0, const vector<MatrixXd>& G,
     drake::solvers::MobyLCPSolver<double> LCPSolver;
     VectorXd lambda0;
     LCPSolver.SolveLcpLemke(lcs_.F_[0], lcs_.E_[0] * x0 + lcs_.c_[0], &lambda0);
-    constraints_.push_back(prog_.AddLinearConstraint(lambda_[0] == lambda0));
+    constraints_.push_back(prog_.AddLinearConstraint(lambda_[0] == lambda0)); // this is the problem: A size (3x2) while X size 4xN
   }
 
   for (auto& cost : costs_) {
@@ -442,6 +442,7 @@ vector<VectorXd> C3::SolveProjection(const vector<MatrixXd>& G,
 
 void C3::AddLinearConstraint(Eigen::MatrixXd& A, VectorXd& lower_bound,
                              VectorXd& upper_bound, int constraint) {
+
   if (constraint == 1) {
     for (int i = 1; i < N_; i++) {
       user_constraints_.push_back(

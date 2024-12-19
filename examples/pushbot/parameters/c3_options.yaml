@@ -16,9 +16,10 @@ solve_time_filter_alpha: 0.95
 publish_frequency: 15
 
 # [x, y, z, lb, ub]
-workspace_limits: [[1.0, 0.0, 0.0, -3.0, 3.0],
-		   [0.0, 1.0, 0.0, -3.0, 3.0],
-		   [0.0, 0.0, 1.0, -3.0, 3.0]]
+workspace_limits: [[]]
+# workspace_limits: [[1.0, 0.0, 0.0, -3.0, 3.0],
+# 		   [0.0, 1.0, 0.0, -3.0, 3.0],
+# 		   [0.0, 0.0, 1.0, -3.0, 3.0]]
 workspace_margins: 0.05
 u_horizontal_limits: [-10, 10]
 u_vertical_limits: [-0, 30]
