@@ -15,6 +15,7 @@ use_robust_formulation: false
 solve_time_filter_alpha: 0.95
 publish_frequency: 15
 
+# [x, y, z, lb, ub]
 workspace_limits: [[1.0, 0.0, 0.0, -3.0, 3.0],
 		   [0.0, 1.0, 0.0, -3.0, 3.0],
 		   [0.0, 0.0, 1.0, -3.0, 3.0]]
@@ -38,30 +39,28 @@ w_G: 1
 # Penalty on all decision variables, assuming scalar
 w_U: 0.5
 
-# n_lambda = 2 * n_contacts + 2 * n_contacts * num_friction_directions
-# size = n_x ( 7 + 3 + 6 + 3 ) + n_lambda (2 * 3  + 2 * 3 * 2) + n_u (3) = 40 for stewart and trinkle
-# size = n_x ( 7 + 3 + 6 + 3 ) + n_lambda (2 * 3 * 2) + n_u (3) = 34 for anitescu
+# n_lambda = 2 * n_contacts + 2 * n_contacts * num_friction_directions = 20
+# size = n_x ( 2+2 ) + n_lambda (2*2 + 2*2*2) + n_u (2) = 26 for stewart and trinkle
+# size = n_x ( 2+2 ) + n_lambda (2 * 3 * 2) + n_u (2) = 34 for anitescu
+# q_vector, g_vector, u_vector all same size
 
 # State Tracking Error, assuming diagonal
-q_vector: [1, 1, 1, 1]
-
+q_vector: [1, 1, 1, 1] # n_x
 # Penalty on efforts, assuming diagonal
 r_vector: [1, 1]
 
 # Penalty on matching projected variables
-g_x: [1, 1, 1, 1]
-g_gamma: [1, 1, 1, 1]
-g_lambda_n: [1, 1]
-g_lambda_t: [1, 1]
+g_x: [1, 1, 1, 1] # n_x
+g_gamma: [1, 1] # num_contacts
+g_lambda_n: [1, 1] # num_contacts
+g_lambda_t: [1, 1, 1, 1, 1, 1, 1, 1] # 4*num_contacts
 g_lambda: [150, 150, 150, 150, 150, 150, 150, 150]
 g_u: [2.5, 2.5]
 
 # Penalty on matching the QP variables
-u_x: [1, 1, 1, 1]
-u_gamma: [1, 1, 1, 1]
-u_lambda_n: [1, 1]
-u_lambda_t: [1, 1]
+u_x: [1, 1, 1, 1] # n_x
+u_gamma: [1, 1] # num_contacts
+u_lambda_n: [1, 1] # num_contacts
+u_lambda_t: [1, 1, 1, 1, 1, 1, 1, 1] # 4*num_contacts
 u_lambda: [150, 150, 150, 150, 150, 150, 150, 150]
 u_u: [2.5, 2.5]
-
-

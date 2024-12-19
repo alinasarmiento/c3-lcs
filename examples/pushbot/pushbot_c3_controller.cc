@@ -81,8 +81,8 @@ int DoMain(int argc, char* argv[]) {
     drake::lcm::DrakeLcm lcm("udpm://239.255.76.67:7667?ttl=0");
 
     // load parameters
-    drake::yaml::LoadYamlOptions yaml_options;
-    yaml_options.allow_yaml_with_no_cpp = true;
+    // drake::yaml::LoadYamlOptions yaml_options;
+    // yaml_options.allow_yaml_with_no_cpp = true;
     PushbotC3ControllerParams controller_params =
 	drake::yaml::LoadYamlFile<PushbotC3ControllerParams>(
 	    FLAGS_controller_settings);
@@ -112,7 +112,6 @@ int DoMain(int argc, char* argv[]) {
     plant_pushbot.Finalize();
     auto pushbot_context = plant_pushbot.CreateDefaultContext();
 
-    
     // ####### plant_lcs ###########
     
     drake::systems::DiagramBuilder<double> plant_builder;
@@ -159,7 +158,7 @@ int DoMain(int argc, char* argv[]) {
     std::vector<SortedPair<GeometryId>> contact_pairs;
     contact_pairs.emplace_back(contact_geoms["EE"][0], contact_geoms["WALL1"][0]);
     contact_pairs.emplace_back(contact_geoms["EE"][0], contact_geoms["WALL2"][0]);
-    
+
     // ############### wiring #############
     
     DiagramBuilder<double> builder;
@@ -194,9 +193,13 @@ int DoMain(int argc, char* argv[]) {
     
     auto lcs_factory = builder.AddSystem<systems::LCSFactorySystem>(plant_lcs, plant_lcs_context, *plant_autodiff,
 								    *wall_context_ad, contact_pairs, c3_options);
+    // #################
+
     auto controller = builder.AddSystem<systems::C3Controller>(plant_lcs, c3_options);
+    std::cout << "check\n";            
+
     auto c3_trajectory_generator = builder.AddSystem<systems::C3TrajectoryGenerator>(plant_lcs, c3_options);
-    
+
     std::vector<std::string> state_names = {
       "theta",  "ee_x", "dtheta", "ee_dx"
     };
@@ -205,14 +208,14 @@ int DoMain(int argc, char* argv[]) {
     auto c3_output_sender = builder.AddSystem<systems::C3OutputSender>();
     controller->SetOsqpSolverOptions(solver_options);
     auto kinematics_model = builder.AddSystem<systems::PushbotKinematics>(plant_pushbot, pushbot_context.get());
-
+    // ########################
     auto pushbot_command_pub =
       builder.AddSystem(LcmPublisherSystem::Make<dairlib::lcmt_robot_input>(
           lcm_channel_params.pushbot_input_channel, &lcm,
           TriggerTypeSet({TriggerType::kForced})));
     auto pushbot_command_sender =
       builder.AddSystem<systems::RobotCommandSender>(plant_pushbot);
-    
+
     builder.Connect(*radio_sub, *radio_to_vector);
     
     builder.Connect(target_source->get_output_port(),

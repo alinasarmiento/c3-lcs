@@ -145,6 +145,9 @@ C3::C3(const LCS& lcs, const C3::CostMatrices& costs,
   }
   input_costs_.resize(N_);
   for (int i = 0; i < N_ + 1; i++) {
+    // std::cout << "Q Matrix size: " << cost_matrices_.Q.at(i).rows() << "x" << cost_matrices_.Q.at(i).cols() << "\n";
+    // std::cout << "x_des size: " << x_desired_.at(i).rows() << "x" << x_desired_.at(i).cols() << "\n";
+    // std::cout << "x size: " << x_.at(i).rows() << "x" << x_.at(i).cols() << "\n";
     target_cost_[i] =
         prog_
             .AddQuadraticCost(2 * cost_matrices_.Q.at(i), -2 * cost_matrices_.Q.at(i) * x_desired_.at(i),
@@ -152,6 +155,8 @@ C3::C3(const LCS& lcs, const C3::CostMatrices& costs,
             .evaluator()
             .get();
     if (i < N_) {
+      // std::cout << "R Matrix size: " << cost_matrices_.R.at(i).rows() << "x" << cost_matrices_.R.at(i).cols() << "\n";
+      // std::cout << "u size: " << u_.at(i).rows() << "x" << u_.at(i).cols() << "\n";
       input_costs_[i] =
           prog_
               .AddQuadraticCost(2 * cost_matrices_.R.at(i), VectorXd::Zero(n_u_), u_.at(i), 1)

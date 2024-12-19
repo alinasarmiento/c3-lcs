@@ -1,4 +1,4 @@
-admm_iter: 3
+=admm_iter: 3
 rho: 0 # does not do anything
 rho_scale: 5
 num_threads: 4

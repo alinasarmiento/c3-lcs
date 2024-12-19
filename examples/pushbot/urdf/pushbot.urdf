@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <robot name="pushbot">
+  <!-- Links -->
   <link name="base">
     <visual>
       <origin rpy="0 1.57079633 0" xyz="0 0 0"/>
@@ -68,6 +69,7 @@
     </inertial>
   </link>
 
+  <!-- Joints -->
   <joint name="base_joint" type="revolute">
     <parent link="base"/>
     <child link="arm"/>
@@ -87,4 +89,26 @@
     <origin xyz="0 0 1.0" rpy="0 0 0" />
     <axis xyz="0 1 0"/>
   </joint>
+
+  <!-- Transmissions -->
+  <transmission name="base_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="base_joint">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="base_motor">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+
+  <transmission name="push_transmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="push_joint">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="push_motor">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </actuator>
+  </transmission>
+  
 </robot>
