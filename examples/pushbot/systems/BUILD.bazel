@@ -8,6 +8,7 @@ cc_library(
         ":c3_trajectory_generator",
         ":external_force_generator",
 	":pushbot_kinematics",
+	":c3_soln_to_command",
     ],
 )
 
@@ -56,6 +57,21 @@ cc_library(
     ],
     deps = [
         "//lcmtypes:lcmt_robot",
+        "//systems/framework:vector",
+        "@drake//:drake_shared_library",
+    ],
+)
+cc_library(
+    name = "c3_soln_to_command",
+    srcs = [
+        "c3soln_to_command.cc",
+    ],
+    hdrs = [
+    	"c3soln_to_command.h",
+    ],
+    deps = [
+    	"//common",
+	"//solvers:c3_output",
         "//systems/framework:vector",
         "@drake//:drake_shared_library",
     ],

@@ -34,7 +34,8 @@ RobotOutputReceiver::RobotOutputReceiver(
 
   position_index_map_ = multibody::MakeNameToPositionsMap(plant);
   velocity_index_map_ = multibody::MakeNameToVelocitiesMap(plant);
-  model_instance_ = drake::multibody::ModelInstanceIndex(-1);
+  // model_instance_ = drake::multibody::ModelInstanceIndex(-1);
+  model_instance_ = drake::multibody::ModelInstanceIndex(0);
 
   positions_start_idx_ = 0;
   velocities_start_idx_ = 0;

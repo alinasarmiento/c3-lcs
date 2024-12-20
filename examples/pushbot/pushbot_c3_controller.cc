@@ -30,6 +30,7 @@
 #include "examples/pushbot/systems/c3_state_sender.h"
 #include "examples/pushbot/systems/c3_trajectory_generator.h"
 #include "examples/pushbot/systems/pushbot_kinematics.h"
+#include "examples/pushbot/systems/c3soln_to_command.h"
 #include "solvers/solver_options_io.h"
 #include "solvers/lcs_factory.h"
 #include "systems/controllers/c3/lcs_factory_system.h"
@@ -100,11 +101,12 @@ int DoMain(int argc, char* argv[]) {
     // ####### plant_pushbot ###########
     
     MultibodyPlant<double> plant_pushbot(0.0);
-    Parser parser_pushbot(&plant_pushbot);
+    Parser parser_pushbot(&plant_pushbot, nullptr);
     parser_pushbot.SetAutoRenaming(true);
     
     // add pushbot model
     drake::multibody::ModelInstanceIndex pushbot_index = parser_pushbot.AddModels(FindResourceOrThrow("examples/pushbot/urdf/pushbot.urdf"))[0];
+    std::cout << "pushbot index in plant_pushbot: " << pushbot_index << std::endl;
     Vector3d pushbot_origin = Eigen::VectorXd::Zero(3);
     RigidTransform<double> R_X_W = RigidTransform<double>(drake::math::RotationMatrix<double>(), pushbot_origin);
     plant_pushbot.WeldFrames(plant_pushbot.world_frame(), plant_pushbot.GetFrameByName("base", pushbot_index), R_X_W);
@@ -126,6 +128,10 @@ int DoMain(int argc, char* argv[]) {
     drake::multibody::ModelInstanceIndex wall1_index = parser_lcs.AddModels(FindResourceOrThrow("examples/pushbot/urdf/wall.urdf"))[0];
     drake::multibody::ModelInstanceIndex wall2_index = parser_lcs.AddModels(FindResourceOrThrow("examples/pushbot/urdf/wall.urdf"))[0];
 
+    std::cout << "pushbot index in plant_lcs: " << pushbot_index_lcs << std::endl;
+    std::cout << "wall1 index in plant_lcs: " << wall1_index << std::endl;
+    std::cout << "wall2 index in plant_lcs: " << wall2_index << std::endl;
+    
     Vector3d wall1_origin = scene_params.wall1_position[0];
     Vector3d wall2_origin = scene_params.wall2_position[0];
     RigidTransform<double> T_E1_W = RigidTransform<double>(drake::math::RotationMatrix<double>(), wall1_origin);
@@ -215,10 +221,9 @@ int DoMain(int argc, char* argv[]) {
           TriggerTypeSet({TriggerType::kForced})));
     auto pushbot_command_sender =
       builder.AddSystem<systems::RobotCommandSender>(plant_pushbot);
+    auto c3_to_command = builder.AddSystem<systems::C3SolutionToRobotCommand>(3);
 
     // size checking
-    std::cout << "kin model: " << kinematics_model->get_output_port_lcs_state().size() << std::endl;
-    std::cout << "c3 state sender: " << c3_state_sender->get_input_port_actual_state().size() << std::endl;
     
     builder.Connect(*radio_sub, *radio_to_vector);
     
@@ -236,15 +241,13 @@ int DoMain(int argc, char* argv[]) {
     builder.Connect(kinematics_model->get_output_port_lcs_input(),
 		    lcs_factory->get_input_port_lcs_input());
 
-    // builder.Connect(controller->get_output_port_c3_solution(),
-    // 		    c3_trajectory_generator->get_input_port_c3_solution());
     builder.Connect(lcs_factory->get_output_port_lcs_contact_jacobian(),
 		    c3_output_sender->get_input_port_lcs_contact_info());
-    // builder.Connect(pushbot_state_receiver->get_output_port(), // other problem line
-    // 		    c3_state_sender->get_input_port_actual_state());
     builder.Connect(kinematics_model->get_output_port_lcs_state(), 
 		    c3_state_sender->get_input_port_actual_state());
-    
+
+    builder.Connect(target_source->get_output_port(),
+		    c3_state_sender->get_input_port_target_state());    
     builder.Connect(c3_state_sender->get_output_port_target_c3_state(),
 		    c3_target_state_publisher->get_input_port());
     builder.Connect(c3_state_sender->get_output_port_actual_c3_state(),
@@ -261,11 +264,12 @@ int DoMain(int argc, char* argv[]) {
     builder.Connect(pushbot_command_sender->get_output_port(),
 		    pushbot_command_pub->get_input_port());
     // type checking
-    std::cout << "c3 soln type: " << controller->get_output_port_c3_solution().get_data_type() << std::endl;
-    std::cout << "pushbot command type: " << pushbot_command_sender->get_input_port(0).get_data_type() << std::endl;
-    builder.Connect(controller->get_output_port_c3_solution(), // new problem line
+    std::cout << "c3 soln 2 command size: " << c3_to_command->get_output_port_robot_command().size() << std::endl;
+    std::cout << "pushbot command size: " << pushbot_command_sender->get_input_port(0).size() << std::endl;
+    builder.Connect(controller->get_output_port_c3_solution(), // test
+		    c3_to_command->get_input_port_c3_solution());
+    builder.Connect(c3_to_command->get_output_port_robot_command(),
 		    pushbot_command_sender->get_input_port(0));
-
     
     auto owned_diagram = builder.Build();
     owned_diagram->set_name(("pushbot_c3_controller"));
