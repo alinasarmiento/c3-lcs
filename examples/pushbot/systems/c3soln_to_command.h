@@ -2,13 +2,14 @@
 
 #include <vector>
 #include "drake/systems/framework/leaf_system.h"
+#include "systems/framework/timestamped_vector.h"
 
 namespace dairlib {
 namespace systems {
 
 class C3SolutionToRobotCommand : public drake::systems::LeafSystem<double> {
 public:
-  explicit C3SolutionToRobotCommand(int vector_size);
+  explicit C3SolutionToRobotCommand(int u_size);
 
   const drake::systems::InputPort<double>& get_input_port_c3_solution() const {
     return this->get_input_port(c3_solution_);
@@ -20,12 +21,12 @@ public:
 
 private:
   void AbstractToVector(const drake::systems::Context<double>& context,
-			drake::systems::BasicVector<double>* output) const;
+			systems::TimestampedVector<double>* output) const;
 
   drake::systems::InputPortIndex c3_solution_;
   drake::systems::OutputPortIndex robot_command_;
 
-  int vector_size_;
+  int u_size_;
 };
     
 } // namespace systems

@@ -221,9 +221,7 @@ int DoMain(int argc, char* argv[]) {
           TriggerTypeSet({TriggerType::kForced})));
     auto pushbot_command_sender =
       builder.AddSystem<systems::RobotCommandSender>(plant_pushbot);
-    auto c3_to_command = builder.AddSystem<systems::C3SolutionToRobotCommand>(3);
-
-    // size checking
+    auto c3_to_command = builder.AddSystem<systems::C3SolutionToRobotCommand>(2);
     
     builder.Connect(*radio_sub, *radio_to_vector);
     
