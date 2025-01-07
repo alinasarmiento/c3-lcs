@@ -203,8 +203,8 @@ int DoMain(int argc, char* argv[]) {
     // #################
 
     auto controller = builder.AddSystem<systems::C3Controller>(plant_lcs, c3_options);
-
-    auto c3_trajectory_generator = builder.AddSystem<systems::C3TrajectoryGenerator>(plant_lcs, c3_options);
+    std::cout << "LCS PLANT n_u_: " << plant_lcs.num_actuators() << std::endl;
+    // auto c3_trajectory_generator = builder.AddSystem<systems::C3TrajectoryGenerator>(plant_lcs, c3_options);
 
     std::vector<std::string> state_names = {
       "theta",  "ee_x", "dtheta", "ee_dx"
@@ -266,6 +266,8 @@ int DoMain(int argc, char* argv[]) {
     std::cout << "pushbot command size: " << pushbot_command_sender->get_input_port(0).size() << std::endl;
     builder.Connect(controller->get_output_port_c3_solution(), // test
 		    c3_to_command->get_input_port_c3_solution());
+    builder.Connect(pushbot_state_receiver->get_output_port(),
+		    c3_to_command->get_input_port_state());
     builder.Connect(c3_to_command->get_output_port_robot_command(),
 		    pushbot_command_sender->get_input_port(0));
     
