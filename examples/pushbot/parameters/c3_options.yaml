@@ -13,7 +13,7 @@ use_predicted_x0: false
 end_on_qp_step: false
 use_robust_formulation: false
 solve_time_filter_alpha: 0.95
-publish_frequency: 15
+publish_frequency: 100
 
 # [x, y, z, lb, ub]
 workspace_limits: [[]]

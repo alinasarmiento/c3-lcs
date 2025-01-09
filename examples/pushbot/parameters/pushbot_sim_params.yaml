@@ -1,4 +1,4 @@
-pushbot_publish_rate: 1000
+pushbot_publish_rate: 100 #1000
 visualizer_publish_rate: 32
 actuator_delay: 0.000
 
