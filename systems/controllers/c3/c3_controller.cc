@@ -87,7 +87,7 @@ C3Controller::C3Controller(
 
   // Set actor bounds,
   // TODO(yangwill): move this out of here because it is task specific
-  // ### (greysar): commented out for pushbot
+  // TODO(greysar): commented out for pushbot
   // if (c3_options_.workspace_limits.size() > 0) {
   //   Eigen::MatrixXd A =
   //       MatrixXd::Zero(c3_options_.workspace_limits.size(), n_x_);
@@ -186,20 +186,32 @@ drake::systems::EventStatus C3Controller::ComputePlan(
   auto mutable_solve_time =
       discrete_state->get_mutable_value(filtered_solve_time_index_);
 
-  if (x_lcs.segment(n_q_, 3).norm() > 0.01 && c3_options_.use_predicted_x0 &&
+//TODO(greysar) -- integrate
+ //   if (x_lcs.segment(n_q_, 3).norm() > 0.01 && c3_options_.use_predicted_x0 &&
+//      !x_pred.isZero()) {
+//    x_lcs[0] = std::clamp(x_pred[0], x_lcs[0] - 10 * dt_ * dt_,
+//                          x_lcs[0] + 10 * dt_ * dt_);
+//    x_lcs[1] = std::clamp(x_pred[1], x_lcs[1] - 10 * dt_ * dt_,
+//                          x_lcs[1] + 10 * dt_ * dt_);
+//    x_lcs[2] = std::clamp(x_pred[2], x_lcs[2] - 10 * dt_ * dt_,
+//                          x_lcs[2] + 10 * dt_ * dt_);
+//    x_lcs[n_q_ + 0] = std::clamp(x_pred[n_q_ + 0], x_lcs[n_q_ + 0] - 10 * dt_,
+//                                 x_lcs[n_q_ + 0] + 10 * dt_);
+//    x_lcs[n_q_ + 1] = std::clamp(x_pred[n_q_ + 1], x_lcs[n_q_ + 1] - 10 * dt_,
+//                                 x_lcs[n_q_ + 1] + 10 * dt_);
+//    x_lcs[n_q_ + 2] = std::clamp(x_pred[n_q_ + 2], x_lcs[n_q_ + 2] - 10 * dt_,
+//                                 x_lcs[n_q_ + 2] + 10 * dt_);
+//  }
+  if (x_lcs.segment(n_q_, 1).norm() > 0.01 && c3_options_.use_predicted_x0 &&
       !x_pred.isZero()) {
     x_lcs[0] = std::clamp(x_pred[0], x_lcs[0] - 10 * dt_ * dt_,
                           x_lcs[0] + 10 * dt_ * dt_);
     x_lcs[1] = std::clamp(x_pred[1], x_lcs[1] - 10 * dt_ * dt_,
                           x_lcs[1] + 10 * dt_ * dt_);
-    x_lcs[2] = std::clamp(x_pred[2], x_lcs[2] - 10 * dt_ * dt_,
-                          x_lcs[2] + 10 * dt_ * dt_);
     x_lcs[n_q_ + 0] = std::clamp(x_pred[n_q_ + 0], x_lcs[n_q_ + 0] - 10 * dt_,
                                  x_lcs[n_q_ + 0] + 10 * dt_);
     x_lcs[n_q_ + 1] = std::clamp(x_pred[n_q_ + 1], x_lcs[n_q_ + 1] - 10 * dt_,
                                  x_lcs[n_q_ + 1] + 10 * dt_);
-    x_lcs[n_q_ + 2] = std::clamp(x_pred[n_q_ + 2], x_lcs[n_q_ + 2] - 10 * dt_,
-                                 x_lcs[n_q_ + 2] + 10 * dt_);
   }
 
   discrete_state->get_mutable_value(plan_start_time_index_)[0] =
@@ -208,17 +220,18 @@ drake::systems::EventStatus C3Controller::ComputePlan(
   std::vector<VectorXd> x_desired =
       std::vector<VectorXd>(N_ + 1, x_des.value());
 
+//TODO(greysar) -- integrate
   // Force Checking of Workspace Limits
-  for (int i = 0; i < c3_options_.workspace_limits.size(); ++i) {
-    DRAKE_DEMAND(lcs_x->get_data().segment(0, 3).transpose() *
-                     c3_options_.workspace_limits[i].segment(0, 3) >
-                 c3_options_.workspace_limits[i][3] -
-                     c3_options_.workspace_margins);
-    DRAKE_DEMAND(lcs_x->get_data().segment(0, 3).transpose() *
-                     c3_options_.workspace_limits[i].segment(0, 3) <
-                 c3_options_.workspace_limits[i][4] +
-                     c3_options_.workspace_margins);
-  }
+//  for (int i = 0; i < c3_options_.workspace_limits.size(); ++i) {
+//    DRAKE_DEMAND(lcs_x->get_data().segment(0, 3).transpose() *
+//                     c3_options_.workspace_limits[i].segment(0, 3) >
+//                 c3_options_.workspace_limits[i][3] -
+//                     c3_options_.workspace_margins);
+//    DRAKE_DEMAND(lcs_x->get_data().segment(0, 3).transpose() *
+//                     c3_options_.workspace_limits[i].segment(0, 3) <
+//                 c3_options_.workspace_limits[i][4] +
+//                     c3_options_.workspace_margins);
+//  }
 
   c3_->UpdateLCS(lcs);
   c3_->UpdateTarget(x_desired);

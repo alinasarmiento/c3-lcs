@@ -144,18 +144,18 @@ void RobotOutputReceiver::InitializeSubscriberPositions(
   }
 
   // Set quaternion w = 1, assumes drake quaternion ordering of wxyz
-  if (model_instance_ != drake::multibody::ModelInstanceIndex(-1)) {
-    if (plant.HasUniqueFreeBaseBody(model_instance_)) {
-      state_msg.position.at(0) = 1;
-    }
-  } else {
-    for (const auto& body_idx : plant.GetFloatingBaseBodies()) {
-      const auto& body = plant.get_body(body_idx);
-      if (body.has_quaternion_dofs()) {
-        state_msg.position.at(body.floating_positions_start()) = 1;
-      }
-    }
-  }
+//  if (model_instance_ != drake::multibody::ModelInstanceIndex(-1)) {
+//    if (plant.HasUniqueFreeBaseBody(model_instance_)) {
+//      state_msg.position.at(0) = 1;
+//    }
+//  } else {
+//    for (const auto& body_idx : plant.GetFloatingBaseBodies()) {
+//      const auto& body = plant.get_body(body_idx);
+//      if (body.has_quaternion_dofs()) {
+//        state_msg.position.at(body.floating_positions_start()) = 1;
+//      }
+//    }
+//  }
 
   for (int i = 0; i < num_velocities_; i++) {
     state_msg.velocity[i] = 0;

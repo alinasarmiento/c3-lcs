@@ -236,6 +236,8 @@ int DoMain(int argc, char* argv[]) {
 
     builder.Connect(kinematics_model->get_output_port_lcs_state(),
 		    lcs_factory->get_input_port_lcs_state());
+	builder.Connect(kinematics_model->get_output_port_lcs_state(),
+			controller->get_input_port_lcs_state());
     builder.Connect(kinematics_model->get_output_port_lcs_input(),
 		    lcs_factory->get_input_port_lcs_input());
 
